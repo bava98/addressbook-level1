@@ -429,7 +429,7 @@ public class AddressBook {
         if (addPersonToAddressBook(personToAdd)) {
             return getMessageForSuccessfulAddPerson(personToAdd);
         } else {
-            return "Person with this name, phone and email already exists!";
+            return "Person with this name, phone and email already exists in address book!";
         }
     }
 
