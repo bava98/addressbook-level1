@@ -44,7 +44,7 @@ public class AddressBook {
     /**
      * Version info of the program.
      */
-    private static final String VERSION = "AddessBook Level 1 - Version 1.0";
+    private static final String VERSION = "AddressBook Level 1 - Version 1.0";
 
     /**
      * A decorative prefix added to the beginning of lines printed by AddressBook
@@ -426,8 +426,11 @@ public class AddressBook {
 
         // add the person as specified
         final String[] personToAdd = decodeResult.get();
-        addPersonToAddressBook(personToAdd);
-        return getMessageForSuccessfulAddPerson(personToAdd);
+        if (addPersonToAddressBook(personToAdd)) {
+            return getMessageForSuccessfulAddPerson(personToAdd);
+        } else {
+            return "Person with this name, phone and email already exists!";
+        }
     }
 
     /**
@@ -782,9 +785,38 @@ public class AddressBook {
      *
      * @param person to add
      */
-    private static void addPersonToAddressBook(String[] person) {
-        ALL_PERSONS.add(person);
-        savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
+    private static boolean addPersonToAddressBook(String[] person) {
+        
+        boolean isDuplicate = checkDuplicateRecord(person);
+        
+        if (!isDuplicate) {
+            ALL_PERSONS.add(person);
+            savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Checks if the records of this person already exists.
+     * 
+     * @param person to add
+     * @return true if already exists, false if not
+     */
+    private static boolean checkDuplicateRecord(String[] person) {
+        String newPersonName = getNameFromPerson(person);
+        String newPersonPhone = getPhoneFromPerson(person);
+        String newPersonEmail = getEmailFromPerson(person);
+    
+        for (String[] allPersons : ALL_PERSONS) {
+            if (newPersonName.equals(getNameFromPerson(allPersons)) && newPersonPhone.equals(getPhoneFromPerson(allPersons)) 
+                    && newPersonEmail.equals(getEmailFromPerson(allPersons))) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
